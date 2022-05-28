@@ -1,0 +1,48 @@
+<?php
+	$servername = "localhost"; // сервер комьютерийн хаяг буюу нэр
+	$username = "root";     // MySQL-ийн бааз руу хандах хэрэглэгчийн нэр
+	$password = ""; // MySQL-ийн бааз руу хандах нууц үг
+	$database = "dreamhome"; // Баазын нэр
+
+	// Өгөгдлийн сантай холбох объект үүсгэх
+	$conn = new mysqli($servername, $username, $password, $database);
+
+	// Ямар үйлдэл хийх гэж байгааг GET хүсэлтээр хүлээж авна
+	$action = isset($_GET['action']) ? $_GET['action'] : '';
+	
+	// Хүснэгтийн primarykey-г id-аар дамжуулна
+	$id = isset($_POST['id']) ? $_POST['id'] : '';
+	
+	if($action == "viewingadd"){
+		if($id == ''){
+			$qry = "
+				insert into viewing(clientNo, propertyNo, viewDate, comment)
+				values ('{$_POST['clientNo']}',	'{$_POST['propertyNo']}',	'{$_POST['viewDate']}',	'{$_POST['comment']}')
+				";
+		}else{
+			$qry = "
+				update viewing set
+				clientNo = '{$_POST['clientNo']}',
+                propertyNo = '{$_POST['propertyNo']}',
+                viewDate = '{$_POST['viewDate']}',
+                comment = '{$_POST['comment']}'
+				where clientNo = '{$id}'
+			";
+		}
+		if ($conn->query($qry) === true) {
+			header('location: viewing.php');
+		}else{
+			echo $conn->error;
+		}
+	}
+	if($action == "viewingdel"){
+		$id = isset($_GET['id']) ? $_GET['id'] : '';
+		$qry = "delete from viewing where clientNo = '{$id}'";
+		if ($conn->query($qry) === true) {
+			header('location: viewing.php');
+		}else{
+			echo $conn->error;
+		}
+	}
+	
+?>
